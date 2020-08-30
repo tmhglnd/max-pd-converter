@@ -15,7 +15,7 @@ $ npm install
 # Usage
 
 ```
-npm start <filepath>/<filename>.maxpat
+$ npm start <filepath>/<filename>.maxpat
 ```
 
 The result is stored in the same folder as the original file and named as `<filename>.pd`
