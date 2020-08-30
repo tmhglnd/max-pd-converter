@@ -56,6 +56,8 @@ function convertPd(file) {
 			pd += " obj " + pos + " tgl 15 0 empty empty empty 17 7 0 10 -262144 -1 -1 0 1";
 		} else if (type === 'button'){
 			pd += " obj " + pos + " bng 15 250 50 0 empty empty empty 17 7 0 10 -262144 -1 -1";
+		} else if (type === 'comment'){
+			pd += " text " + pos + " " + obj.box.text;
 		}
 		
 		pd += ";";
@@ -95,5 +97,8 @@ let pdMapping = {
 	},
 	'button' : {
 		'name' : 'bng'
-	}
+	},
+	'comment' : {
+		'name' : 'cmt'
+	},
 }*/
