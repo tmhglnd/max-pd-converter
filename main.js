@@ -6,6 +6,7 @@
 // 
 
 const fs = require('fs-extra');
+const path = require('path');
 
 if (process.argv[2] === undefined){
 	console.error("Please provide a .maxpat file as argument");
@@ -45,7 +46,7 @@ function convertPd(file) {
 		
 		pd += "\n#X";
 		
-		if (type === 'number'){
+		if (type === 'number' || type === 'flonum'){
 			pd += " floatatom " + pos + " 8 " + "0 0 0" + " - - -, " + "f 8";
 		} else if (type === 'message'){
 			pd += " msg " + pos + " " + obj.box.text;
@@ -73,7 +74,9 @@ function convertPd(file) {
 	});
 	
 	// write output file
-	fs.writeFile(file+'-output.pd', pd);
+	let fInfo = path.parse(file);
+	let outFile = path.join(fInfo.dir, fInfo.name + '.pd');
+	fs.writeFile(outFile, pd);
 }
 
 /*
