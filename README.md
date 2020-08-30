@@ -20,6 +20,8 @@ $ npm start <filepath>/<filename>.maxpat
 
 The result is stored in the same folder as the original file and named as `<filename>.pd`
 
+![](images/screenshot.png)
+
 ## Contribution
 
 1. Fork this repository (click `fork` in the top right)
