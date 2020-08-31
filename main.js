@@ -13,19 +13,22 @@ let pat = { ...patchTemplate }
 
 const mapping = {
 	'text' : {
-		'maxclass' : 'comment',
+		'maxclass' : 'comment'
 	},
 	'msg' : {
-		'maxclass' : 'message',
+		'maxclass' : 'message'
 	},
 	'floatatom' : {
-		'maxclass' : 'flonum',
+		'maxclass' : 'flonum'
+	},
+	'symbolatom' : {
+		'maxclass' : 'message'
 	},
 	'tgl' : {
-		'maxclass' : 'toggle',
+		'maxclass' : 'toggle'
 	},
 	'bng' : {
-		'maxclass' : 'bang',
+		'maxclass' : 'bang'
 	},
 	'vsl' : {
 		'maxclass' : 'slider',
@@ -87,43 +90,61 @@ function convertPd(file){
 	// let lines = [];
 
 	let pd = fs.readFileSync('./test/pdtest.pd', 'utf8');
-	pd = pd.split("\n");
+
+	pd = pd.replace(/\n/g, ' ');
+	pd = pd.match(/(#([^;]+)\;)/g, '');
+	pd = pd.map(x => x.replace(/(#N |#X |;)/g, '').split(' '));
+	// console.log(pd);
 
 	for (let i=0; i<pd.length; i++){
-		if (pd[i] === ""){ break; }
-
-		let code = pd[i].match(/(.*)\;$/)[1].split(" ");
-		// console.log("parse line "+i+":", code);
-
-		let type = code[1];
+		let type = pd[i][0];
+		let code = pd[i].slice(1, pd[i].length);
+		
+		let line = {
+			"type" : type,
+			"position" : code.slice(0, 2),
+			"arguments" : code.slice(2, code.length),
+			"id" : 'obj-'+i
+		}
+		// console.log(line);
 
 		if (type.match(/canvas/)){
 			// console.log('match canvas', type);
+			let rect = [ ...line.position, ...line.arguments ];
+			pat.patcher.rect = rect.slice(0, 4);
 
 		} else if (type.match(/connect/)){
 			// console.log('match connect', type);
 		
 		} else if (type.match(/[obj|msg|floatatom|text|symbolatom]/)){
-			// console.log('other match', type);
-		
-		}
-/*
-		let line = {
-			"type" : code[1],
-			"position" : [ code[2], code[3] ],
-			"arguments" : code.slice(4, code.length+1),
-			"id" : 'obj-'+i
-		}
-		console.log(line);
+			// console.log('match other', type);
+			let obj = JSON.parse(JSON.stringify(maxObject));			
+			let map = {};
 
-		if (processPd[line.type] !== undefined){
-			processPd[line.type](line);
-		}*/
+			obj.box.patching_rect = line.position;
+			obj.box.id = line.id;
+			obj.box.text = line.arguments.join(" ");
+
+			if (mapping[type]){
+				map = mapping[type];
+			} else if (mapping[line.arguments[0]]){
+				map = mapping[line.arguments[0]];
+			} else {
+				map = { 'maxclass' : line.arguments[0] };
+			}
+
+			Object.keys(map).forEach((k) => {
+				obj.box[k] = map[k];
+			});
+
+			pat.patcher.boxes.push(obj);
+			// console.log(obj);
+		}
 	}
 	// pat.boxes = boxes;
+	// console.log(pat.patcher);
 	// console.log(pat.patcher.boxes);
-
-	// fs.writeJsonSync('./test/pdtest.maxpat', pat);
+	fs.writeJsonSync('./test/pdtest.maxpat', pat, { spaces: 2});
 }
 
 function convertMax(file){
