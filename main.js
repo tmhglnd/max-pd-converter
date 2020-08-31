@@ -8,20 +8,125 @@
 const fs = require('fs-extra');
 const path = require('path');
 
+const patchTemplate = require('./data/maxpat.json')
+let pat = { ...patchTemplate }
+
+const mapping = {
+	'text' : {
+		'maxclass' : 'comment',
+	},
+	'msg' : {
+		'maxclass' : 'message',
+	},
+	'floatatom' : {
+		'maxclass' : 'flonum',
+	},
+	'tgl' : {
+		'maxclass' : 'toggle',
+	},
+	'bng' : {
+		'maxclass' : 'bang',
+	},
+	'vsl' : {
+		'maxclass' : 'slider',
+		'orientation' : 1
+	},
+	'hsl' : {
+		'maxclass' : 'slider',
+		'orientation' : 2
+	}
+}
+
+const maxObject = {
+	"box" : {
+		"id" : "",
+		"maxclass" : "comment",
+		// "numinlets" : 1,
+		// "numoutlets" : 0,
+		"patching_rect" : [ 45.0, 45.0, 150.0, 20.0 ],
+		"text" : ""
+	}
+}
+
+const processPd = {
+	'canvas' : (line) => {
+		// process the canvas
+		// console.log('process:', line.type);
+		let rect = [ ...line.position, ...line.arguments ];
+		pat.patcher.rect = rect.slice(0, 4);
+	},
+	'text' : (line) => {
+		// process the objects
+		// console.log('process:', line.type);
+		let obj = { ...maxObject };
+		obj.box.maxclass = mapping[line.type];
+		obj.box.patching_rect = line.position;
+		obj.box.text = line.arguments.join(" ");
+		obj.box.id = line.id;
+
+		pat.patcher.boxes.push(obj);
+	}
+}
+
 if (process.argv[2] === undefined){
 	console.error("Please provide a .maxpat file as argument");
-	return;
+	// convertPd();
 } else {
 	let f = process.argv[2];
 	if (f.match(/.*\.maxpat$/) === null){
 		console.error("Please provide a .maxpat file as argument");
-		return;
 	} else {
-		convertPd(process.argv[2]);
+		// convert the Maxpatch to Pd
+		convertMax(process.argv[2]);
 	}
 }
 
-function convertPd(file) {
+function convertPd(file){
+	// let pat = { ...patchTemplate };
+	// let boxes = [];
+	// let lines = [];
+
+	let pd = fs.readFileSync('./test/pdtest.pd', 'utf8');
+	pd = pd.split("\n");
+
+	for (let i=0; i<pd.length; i++){
+		if (pd[i] === ""){ break; }
+
+		let code = pd[i].match(/(.*)\;$/)[1].split(" ");
+		// console.log("parse line "+i+":", code);
+
+		let type = code[1];
+
+		if (type.match(/canvas/)){
+			// console.log('match canvas', type);
+
+		} else if (type.match(/connect/)){
+			// console.log('match connect', type);
+		
+		} else if (type.match(/[obj|msg|floatatom|text|symbolatom]/)){
+			// console.log('other match', type);
+		
+		}
+/*
+		let line = {
+			"type" : code[1],
+			"position" : [ code[2], code[3] ],
+			"arguments" : code.slice(4, code.length+1),
+			"id" : 'obj-'+i
+		}
+		console.log(line);
+
+		if (processPd[line.type] !== undefined){
+			processPd[line.type](line);
+		}*/
+	}
+	// pat.boxes = boxes;
+	// console.log(pat.patcher.boxes);
+
+	// fs.writeJsonSync('./test/pdtest.maxpat', pat);
+}
+
+function convertMax(file){
 	// string for output text
 	let pd = "";
 	// read the maxpatch
