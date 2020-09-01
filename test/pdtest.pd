@@ -1,14 +1,15 @@
-#N canvas 497 61 387 551 10;
-#X text 55 43 Hello World!;
-#X obj 55 81 +;
-#X msg 55 121 aMessage;
-#X floatatom 55 161 5 0 0 0 - - -, f 5;
-#X symbolatom 55 209 10 0 0 0 - - -, f 10;
-#X obj 55 253 tgl 15 0 empty empty empty 17 7 0 10 -262144 -1 -1 0
-1;
-#X obj 55 292 bng 15 250 50 0 empty empty empty 17 7 0 10 -262144 -1
+#N canvas 148 150 387 551 10;
+#X text 41 46 Hello World!;
+#X msg 43 167 5;
+#X msg 144 170 6;
+#X obj 89 217 + 11;
+#X floatatom 88 272 5 0 0 0 - - -, f 5;
+#X obj 86 90 bng 15 250 50 0 empty empty empty 17 7 0 10 -262144 -1
 -1;
-#X obj 56 333 vsl 15 128 0 127 0 0 empty empty empty 0 -9 0 10 -262144
--1 -1 0 1;
-#X obj 89 334 hsl 128 15 0 127 0 0 empty empty empty -2 -8 0 10 -262144
--1 -1 0 1;
+#X obj 86 127 t b b;
+#X connect 1 0 3 0;
+#X connect 2 0 3 1;
+#X connect 3 0 4 0;
+#X connect 5 0 6 0;
+#X connect 6 0 1 0;
+#X connect 6 1 2 0;

@@ -12,31 +12,52 @@ const patchTemplate = require('./data/maxpat.json')
 let pat = { ...patchTemplate }
 
 const mapping = {
-	'text' : {
-		'maxclass' : 'comment'
+	'obj' : (args) => {
+		return { 
+			'maxclass' : 'newobj',
+			'text' : args.slice(2, args.length).join(" ") }
 	},
-	'msg' : {
-		'maxclass' : 'message'
+	'text' : (args) => {
+		return { 
+			'maxclass' : 'comment',
+			'text' : args.slice(2, args.length).join(" ") }
 	},
-	'floatatom' : {
-		'maxclass' : 'flonum'
+	'msg' : (args) => {
+		return { 
+			'maxclass' : 'message',
+			'text' : args.slice(2, args.length).join(" ") }
 	},
-	'symbolatom' : {
-		'maxclass' : 'message'
+	'floatatom' : (args) => {
+		let pos = args.slice(0, 2);
+		return { 
+			'maxclass' : 'flonum',
+			"patching_rect" : pos.concat([ 50.0, 22.0 ]) 
+		}
 	},
-	'tgl' : {
-		'maxclass' : 'toggle'
+	'symbolatom' : (args) => {
+		return { 
+			'maxclass' : 'message',
+			'text' : '' }
 	},
-	'bng' : {
-		'maxclass' : 'bang'
+	'tgl' : () => {
+		return { 'maxclass' : 'toggle' }
 	},
-	'vsl' : {
-		'maxclass' : 'slider',
-		'orientation' : 1
+	'bng' : (args) => {
+		let pos = args.slice(0, 2);		
+		return { 
+			'maxclass' : 'button',
+			"patching_rect" : pos.concat([ 24.0, 24.0 ])
+		}
 	},
-	'hsl' : {
-		'maxclass' : 'slider',
-		'orientation' : 2
+	'vsl' : () => {
+		return { 
+			'maxclass' : 'slider',
+			'orientation' : 1 }
+	},
+	'hsl' : () => {
+		return { 
+			'maxclass' : 'slider',
+			'orientation' : 2 }
 	}
 }
 
@@ -46,34 +67,14 @@ const maxObject = {
 		"maxclass" : "comment",
 		// "numinlets" : 1,
 		// "numoutlets" : 0,
-		"patching_rect" : [ 45.0, 45.0, 150.0, 20.0 ],
-		"text" : ""
-	}
-}
-
-const processPd = {
-	'canvas' : (line) => {
-		// process the canvas
-		// console.log('process:', line.type);
-		let rect = [ ...line.position, ...line.arguments ];
-		pat.patcher.rect = rect.slice(0, 4);
-	},
-	'text' : (line) => {
-		// process the objects
-		// console.log('process:', line.type);
-		let obj = { ...maxObject };
-		obj.box.maxclass = mapping[line.type];
-		obj.box.patching_rect = line.position;
-		obj.box.text = line.arguments.join(" ");
-		obj.box.id = line.id;
-
-		pat.patcher.boxes.push(obj);
+		"patching_rect" : [ 45.0, 45.0, 150.0, 20.0 ]
+		// "text" : ""
 	}
 }
 
 if (process.argv[2] === undefined){
 	console.error("Please provide a .maxpat file as argument");
-	// convertPd();
+	convertPd();
 } else {
 	let f = process.argv[2];
 	if (f.match(/.*\.maxpat$/) === null){
@@ -85,65 +86,73 @@ if (process.argv[2] === undefined){
 }
 
 function convertPd(file){
-	// let pat = { ...patchTemplate };
-	// let boxes = [];
-	// let lines = [];
-
+	// the max patcher template
+	let pat = { ...patchTemplate };
+	// arrays to store boxes and connections
+	let boxes = [];
+	let lines = [];
+	// read the pd file as text
 	let pd = fs.readFileSync('./test/pdtest.pd', 'utf8');
-
+	
+	// replace the new lines with spaces
 	pd = pd.replace(/\n/g, ' ');
+	// divide into array of groups starting with #, ending with ;
 	pd = pd.match(/(#([^;]+)\;)/g, '');
+	// remove #N, #X and ; and split into token arrays
 	pd = pd.map(x => x.replace(/(#N |#X |;)/g, '').split(' '));
 	// console.log(pd);
 
 	for (let i=0; i<pd.length; i++){
+		// type of line; canvas, obj, connect, text, msg, floatatom
 		let type = pd[i][0];
 		let code = pd[i].slice(1, pd[i].length);
 		
-		let line = {
-			"type" : type,
-			"position" : code.slice(0, 2),
-			"arguments" : code.slice(2, code.length),
-			"id" : 'obj-'+i
-		}
-		// console.log(line);
-
 		if (type.match(/canvas/)){
-			// console.log('match canvas', type);
-			let rect = [ ...line.position, ...line.arguments ];
+			// if type matches canvas
+			let rect = code.slice(0, 4);
 			pat.patcher.rect = rect.slice(0, 4);
-
+			// console.log('parse canvas', pat.patcher.rect);
 		} else if (type.match(/connect/)){
-			// console.log('match connect', type);
-		
+			// if type matches connect
+			// 
+			// TO-DO
+			// 
 		} else if (type.match(/[obj|msg|floatatom|text|symbolatom]/)){
-			// console.log('match other', type);
-			let obj = JSON.parse(JSON.stringify(maxObject));			
-			let map = {};
+			// if type matches obj|msg|floatatom|text|symbolatom
+			console.log('parse object', type);
+			let obj = JSON.parse(JSON.stringify(maxObject));
+			let map;
 
-			obj.box.patching_rect = line.position;
-			obj.box.id = line.id;
-			obj.box.text = line.arguments.join(" ");
+			let pos = code.slice(0, 2);
+			let args = code.slice(2, code.lenght).join(" ");
+
+			// console.log('@pos', pos);
+			// console.log('@args', args);
+
+			obj.box.patching_rect = pos;
+			// obj.box.text = args;			
+			// obj.box.id = line.id;
 
 			if (mapping[type]){
-				map = mapping[type];
-			} else if (mapping[line.arguments[0]]){
-				map = mapping[line.arguments[0]];
-			} else {
-				map = { 'maxclass' : line.arguments[0] };
+				map = mapping[type](code);
+			} 
+			if (mapping[code[2]] || map === 'obj'){
+				map = mapping[code[2]](code);
 			}
-
+			// console.log('@map', map);
+			
 			Object.keys(map).forEach((k) => {
 				obj.box[k] = map[k];
+				// console.log('@box', k, map[k]);
 			});
-
+			
 			pat.patcher.boxes.push(obj);
-			// console.log(obj);
+			// console.log('@box', obj);
 		}
 	}
-	// pat.boxes = boxes;
+	pat.boxes = boxes;
 	// console.log(pat.patcher);
-	// console.log(pat.patcher.boxes);
+	console.log(pat.patcher.boxes);
 	fs.writeJsonSync('./test/pdtest.maxpat', pat, { spaces: 2});
 }
 
@@ -206,25 +215,3 @@ function convertMax(file){
 	let outFile = path.join(fInfo.dir, fInfo.name + '.pd');
 	fs.writeFile(outFile, pd);
 }
-
-/*
-let pdMapping = {
-	'number' : {
-		'name' : 'floatatom'
-	},
-	'message' : {
-		'name' : 'msg'
-	},
-	'newobj' : {
-		'name' : 'obj'
-	},
-	'toggle' : {
-		'name' : 'tgl'
-	},
-	'button' : {
-		'name' : 'bng'
-	},
-	'comment' : {
-		'name' : 'cmt'
-	},
-}*/

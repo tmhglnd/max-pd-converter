@@ -10,8 +10,8 @@
     },
     "classnamespace": "box",
     "rect": [
-      "497",
-      "61",
+      "148",
+      "150",
       "387",
       "551"
     ],
@@ -48,108 +48,87 @@
     "boxes": [
       {
         "box": {
-          "id": "obj-1",
+          "id": "",
           "maxclass": "comment",
           "patching_rect": [
-            "55",
-            "43"
+            "41",
+            "46"
           ],
           "text": "Hello World!"
         }
       },
       {
         "box": {
-          "id": "obj-2",
-          "maxclass": "+",
-          "patching_rect": [
-            "55",
-            "81"
-          ],
-          "text": "+"
-        }
-      },
-      {
-        "box": {
-          "id": "obj-3",
+          "id": "",
           "maxclass": "message",
           "patching_rect": [
-            "55",
-            "121"
+            "43",
+            "167"
           ],
-          "text": "aMessage"
+          "text": "5"
         }
       },
       {
         "box": {
-          "id": "obj-4",
-          "maxclass": "flonum",
-          "patching_rect": [
-            "55",
-            "161"
-          ],
-          "text": "5 0 0 0 - - -, f 5"
-        }
-      },
-      {
-        "box": {
-          "id": "obj-5",
+          "id": "",
           "maxclass": "message",
           "patching_rect": [
-            "55",
-            "209"
+            "144",
+            "170"
           ],
-          "text": "10 0 0 0 - - -, f 10"
+          "text": "6"
         }
       },
       {
         "box": {
-          "id": "obj-6",
-          "maxclass": "toggle",
-          "patching_rect": [
-            "55",
-            "253"
-          ],
-          "text": "tgl 15 0 empty empty empty 17 7 0 10 -262144 -1 -1 0 1"
-        }
-      },
-      {
-        "box": {
-          "id": "obj-7",
-          "maxclass": "bang",
-          "patching_rect": [
-            "55",
-            "292"
-          ],
-          "text": "bng 15 250 50 0 empty empty empty 17 7 0 10 -262144 -1 -1"
-        }
-      },
-      {
-        "box": {
-          "id": "obj-8",
-          "maxclass": "slider",
-          "patching_rect": [
-            "56",
-            "333"
-          ],
-          "text": "vsl 15 128 0 127 0 0 empty empty empty 0 -9 0 10 -262144 -1 -1 0 1",
-          "orientation": 1
-        }
-      },
-      {
-        "box": {
-          "id": "obj-9",
-          "maxclass": "slider",
+          "id": "",
+          "maxclass": "newobj",
           "patching_rect": [
             "89",
-            "334"
+            "217"
           ],
-          "text": "hsl 128 15 0 127 0 0 empty empty empty -2 -8 0 10 -262144 -1 -1 0 1",
-          "orientation": 2
+          "text": "+ 11"
+        }
+      },
+      {
+        "box": {
+          "id": "",
+          "maxclass": "flonum",
+          "patching_rect": [
+            "88",
+            "272",
+            50,
+            22
+          ]
+        }
+      },
+      {
+        "box": {
+          "id": "",
+          "maxclass": "button",
+          "patching_rect": [
+            "86",
+            "90",
+            24,
+            24
+          ]
+        }
+      },
+      {
+        "box": {
+          "id": "",
+          "maxclass": "newobj",
+          "patching_rect": [
+            "86",
+            "127"
+          ],
+          "text": "t b b"
         }
       }
     ],
     "lines": [],
     "dependency_cache": [],
     "autosave": 0
-  }
+  },
+  "boxes": []
 }
