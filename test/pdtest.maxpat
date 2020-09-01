@@ -48,7 +48,7 @@
     "boxes": [
       {
         "box": {
-          "id": "",
+          "id": "obj-0",
           "maxclass": "comment",
           "patching_rect": [
             "41",
@@ -59,7 +59,7 @@
       },
       {
         "box": {
-          "id": "",
+          "id": "obj-1",
           "maxclass": "message",
           "patching_rect": [
             "43",
@@ -70,7 +70,7 @@
       },
       {
         "box": {
-          "id": "",
+          "id": "obj-2",
           "maxclass": "message",
           "patching_rect": [
             "144",
@@ -81,7 +81,7 @@
       },
       {
         "box": {
-          "id": "",
+          "id": "obj-3",
           "maxclass": "newobj",
           "patching_rect": [
             "89",
@@ -92,7 +92,7 @@
       },
       {
         "box": {
-          "id": "",
+          "id": "obj-4",
           "maxclass": "flonum",
           "patching_rect": [
             "88",
@@ -104,7 +104,7 @@
       },
       {
         "box": {
-          "id": "",
+          "id": "obj-5",
           "maxclass": "button",
           "patching_rect": [
             "86",
@@ -116,7 +116,7 @@
       },
       {
         "box": {
-          "id": "",
+          "id": "obj-6",
           "maxclass": "newobj",
           "patching_rect": [
             "86",
@@ -126,9 +126,81 @@
         }
       }
     ],
-    "lines": [],
+    "lines": [
+      {
+        "patchline": {
+          "destination": [
+            "obj-3",
+            "0"
+          ],
+          "source": [
+            "obj-1",
+            "0"
+          ]
+        }
+      },
+      {
+        "patchline": {
+          "destination": [
+            "obj-3",
+            "1"
+          ],
+          "source": [
+            "obj-2",
+            "0"
+          ]
+        }
+      },
+      {
+        "patchline": {
+          "destination": [
+            "obj-4",
+            "0"
+          ],
+          "source": [
+            "obj-3",
+            "0"
+          ]
+        }
+      },
+      {
+        "patchline": {
+          "destination": [
+            "obj-6",
+            "0"
+          ],
+          "source": [
+            "obj-5",
+            "0"
+          ]
+        }
+      },
+      {
+        "patchline": {
+          "destination": [
+            "obj-1",
+            "0"
+          ],
+          "source": [
+            "obj-6",
+            "0"
+          ]
+        }
+      },
+      {
+        "patchline": {
+          "destination": [
+            "obj-2",
+            "0"
+          ],
+          "source": [
+            "obj-6",
+            "1"
+          ]
+        }
+      }
+    ],
     "dependency_cache": [],
     "autosave": 0
-  },
-  "boxes": []
+  }
 }

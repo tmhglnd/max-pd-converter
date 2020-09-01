@@ -8,8 +8,7 @@
 const fs = require('fs-extra');
 const path = require('path');
 
-const patchTemplate = require('./data/maxpat.json')
-let pat = { ...patchTemplate }
+const patchTemplate = require('./data/maxpat.json');
 
 const mapping = {
 	'obj' : (args) => {
@@ -61,17 +60,6 @@ const mapping = {
 	}
 }
 
-const maxObject = {
-	"box" : {
-		"id" : "",
-		"maxclass" : "comment",
-		// "numinlets" : 1,
-		// "numoutlets" : 0,
-		"patching_rect" : [ 45.0, 45.0, 150.0, 20.0 ]
-		// "text" : ""
-	}
-}
-
 if (process.argv[2] === undefined){
 	console.error("Please provide a .maxpat file as argument");
 	convertPd();
@@ -86,11 +74,13 @@ if (process.argv[2] === undefined){
 }
 
 function convertPd(file){
+	console.log('converting to .maxpat...');
 	// the max patcher template
 	let pat = { ...patchTemplate };
 	// arrays to store boxes and connections
 	let boxes = [];
 	let lines = [];
+	let id = 0;
 	// read the pd file as text
 	let pd = fs.readFileSync('./test/pdtest.pd', 'utf8');
 	
@@ -112,26 +102,21 @@ function convertPd(file){
 			let rect = code.slice(0, 4);
 			pat.patcher.rect = rect.slice(0, 4);
 			// console.log('parse canvas', pat.patcher.rect);
-		} else if (type.match(/connect/)){
-			// if type matches connect
-			// 
-			// TO-DO
-			// 
-		} else if (type.match(/[obj|msg|floatatom|text|symbolatom]/)){
+		} else if (type.match(/(obj|msg|floatatom|text|symbolatom)/)){
 			// if type matches obj|msg|floatatom|text|symbolatom
-			console.log('parse object', type);
-			let obj = JSON.parse(JSON.stringify(maxObject));
+			let obj = {
+				"box" : {
+					"id" : "",
+					"maxclass" : "comment",
+					"patching_rect" : [ 45.0, 45.0, 150.0, 20.0 ]
+				}
+			};
 			let map;
 
 			let pos = code.slice(0, 2);
-			let args = code.slice(2, code.lenght).join(" ");
-
-			// console.log('@pos', pos);
-			// console.log('@args', args);
 
 			obj.box.patching_rect = pos;
-			// obj.box.text = args;			
-			// obj.box.id = line.id;
+			obj.box.id = 'obj-'+id;
 
 			if (mapping[type]){
 				map = mapping[type](code);
@@ -143,17 +128,25 @@ function convertPd(file){
 			
 			Object.keys(map).forEach((k) => {
 				obj.box[k] = map[k];
-				// console.log('@box', k, map[k]);
 			});
 			
 			pat.patcher.boxes.push(obj);
-			// console.log('@box', obj);
+			id++;
+		} else if (type.match(/connect/)){
+			// if type matches connect
+			pat.patcher.lines.push({
+				"patchline" : {
+					"destination" : [ 'obj-'+code[2], code[3] ],
+					"source" : [ 'obj-'+code[0], code[1] ]
+				}
+			});
 		}
 	}
-	pat.boxes = boxes;
 	// console.log(pat.patcher);
-	console.log(pat.patcher.boxes);
+	// console.log(pat.patcher.boxes);
+	// console.log(pat.patcher.lines);
 	fs.writeJsonSync('./test/pdtest.maxpat', pat, { spaces: 2});
+	console.log('conversion complete!');
 }
 
 function convertMax(file){
