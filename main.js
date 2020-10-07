@@ -13,9 +13,16 @@ const patchTemplate = require('./data/maxpat.json');
 const parser = {
 	// Pd -> Max Processor
 	'obj' : (args) => {
-		return { 
+		console.log('@obj', args);
+		let obj = { 
 			'maxclass' : 'newobj',
-			'text' : args.slice(2, args.length).join(" ") }
+			'text' : args.slice(2, args.length).join(" ") };
+		// if (args.length > 4){
+		// 	console.log('args', args.length, args);
+		// 	obj['position'] = [ ...args.slice(0, 2), 120.0, 22.0 ]
+		// }
+		// console.log('@obj', obj);
+		return obj;
 	},
 	'text' : (args) => {
 		return { 
@@ -39,8 +46,12 @@ const parser = {
 			'maxclass' : 'message',
 			'text' : '' }
 	},
-	'tgl' : () => {
-		return { 'maxclass' : 'toggle' }
+	'tgl' : (args) => {
+		let pos = args.slice(0, 2);		
+		return { 
+			'maxclass' : 'toggle',
+			"patching_rect" : pos.concat([ 24.0, 24.0 ])
+		}
 	},
 	'bng' : (args) => {
 		let pos = args.slice(0, 2);		
@@ -86,10 +97,8 @@ const parser = {
 
 if (process.argv[2] === undefined){
 	console.error("Please provide a .maxpat or .pd file as argument");
-	
 	// convertPd('test/pdtest.pd');
-	convertMax('test/maxtest.maxpat');
-
+	// convertMax('test/maxtest.maxpat');
 } else {
 	let f = process.argv[2];
 	if (f.match(/.*\.(maxpat|pd)$/) === null){
@@ -135,7 +144,7 @@ function convertPd(file){
 				"box" : {
 					"id" : "",
 					"maxclass" : "comment",
-					"patching_rect" : [ 45.0, 45.0, 150.0, 20.0 ]
+					"patching_rect" : []
 				}
 			};
 			let pos = code.slice(0, 2);
