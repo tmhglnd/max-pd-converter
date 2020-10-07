@@ -1,0 +1,12 @@
+#N canvas 639 265 450 325 12;
+#N canvas 0 22 450 300 mySub 0;
+#X obj 44 45 inlet;
+#X obj 46 216 outlet;
+#X obj 45 129 + 10;
+#X connect 0 0 2 0;
+#X connect 2 0 1 0;
+#X restore 86 126 pd mySub;
+#X floatatom 88 49 5 0 0 0 - - -, f 5;
+#X floatatom 87 180 5 0 0 0 - - -, f 5;
+#X connect 0 0 2 0;
+#X connect 1 0 0 0;
