@@ -1,2 +1,10 @@
 #ignore node_modules
 node_modules
+
+#ignore testresults
+test/maxtest.pd
+test/maxsubtest.pd
+test/maxsubrecursive.pd
+test/pdtest.maxpat
+test/pdsubtest.maxpat
+test/pdsubrecursive.maxpat
