@@ -1,6 +1,6 @@
 # max-pd-converter
 
-A Node.JS script that converts MaxMSP patches to PureData patches. At the moment it does not check for compatible objects or alternatively named objects. This may result in Pd-patches that are not immediately working because of syntax errors in the patches. So you may have to check your .pd output for these errors and fix the patches where needed. It also depends on your version of Pd and which libraries you have included. This converter can however work as a quick starting point for converting your patches without having to repatch everything. Future versions may have better syntax corrections and possibly a Pd to Max patch converter as well.
+A Node.JS script that converts MaxMSP patches to PureData or **vice versa**. At the moment not all objects are compatible with the conversion or alternatively named in the output to ensure compatability. This may result in Pd- or Max-patches that are not immediately working because of syntax errors in the patches. You will have to check your .pd or .maxpat output for these errors and fix the patches where needed. Subpatchers and Abstractions/Externals are also not supported yet. It also depends on your version of Pd/Max and which libraries you have included. This converter can however work as a quick'n'dirty starting point for converting your patches without having to repatch everything. Future versions may have better syntax corrections.
 
 **This is a work-in-progress and contributions are welcome!**
 
@@ -15,10 +15,21 @@ $ npm install
 # Usage
 
 ```
-$ npm start <filepath>/<filename>.maxpat
+$ npm start <filepath>/myMaxPatch.maxpat
+```
+**or**
+```
+$ npm start <filepath>/myPdPatch.pd
 ```
 
-The result is stored in the same folder as the original file and named as `<filename>.pd`
+The result is stored in the same folder as the original file and named as original but with opposite extension.
+
+```
+myMaxPatch.maxpat => myMaxPatch.pd
+myPdPatch.pd      => myPdPatch.maxpat
+```
+
+## Screenshot
 
 ![](images/screenshot.png)
 

@@ -92,6 +92,12 @@ const parser = {
 	'number' : (args) => {
 		return "floatatom " + args[0] + " 8 " + "0 0 0" + " - - -, " + "f 8";
 	},
+	'inlet' : (args) => {
+		return "obj " + args[0] + " " +  " inlet";
+	},
+	'outlet' : (args) => {
+		return "obj " + args[0] + " " +  " outlet";
+	},
 
 }
 
@@ -187,60 +193,94 @@ function convertPd(file){
 }
 
 function convertMax(file){
-	console.log('converting to Pd...');
+	console.log('converting to Pd (recursive) ...');
 	// string for output text
-	let pd = "";
+	pd = "";
+
 	// read the maxpatch
 	let patch = fs.readJsonSync(file);
 	// window settings
 	let window = patch.patcher.rect;
-	// all objects in patch
-	let objects = patch.patcher.boxes;
-	// all connections between objects
-	let lines = patch.patcher.lines;
-	// storage for object connection id's
-	let connections = [];
-
-	// canvas line
-	pd = "#N canvas " + window.join(" ") + " 10;";
 	
-	// all objects
-	objects.forEach((obj) => {
-		// console.log('@object', obj);
-
-		let type = obj.box.maxclass;
-		let args = [];
-		args.push(obj.box.patching_rect.slice(0, 2).join(" "));
-		args.push(obj.box.text);
-
-		connections.push(obj.box.id);
-		
-		let code = "\n#X ";
-
-		if (parser[type] === undefined){
-			console.error('object of type:', type, 'unsupported');
-			return;
-		} else {
-			code += parser[type](args);
-		}
-		// console.log('@parse', code + ";");
-		pd += code + ";";
-	});
-	
-	// all connections
-	lines.forEach((ln) => {
-		let connect = [];
-		connect.push(connections.indexOf(ln.patchline.source[0]));
-		connect.push(ln.patchline.source[1]);
-		connect.push(connections.indexOf(ln.patchline.destination[0]));
-		connect.push(ln.patchline.destination[1]);
-		
-		pd += "\n#X connect " + connect.join(" ") + ";";
-	});
+	depthFirstRecursive(patch,patch.patcher);
 	
 	// write output file
 	let fInfo = path.parse(file);
 	let outFile = path.join(fInfo.dir, fInfo.name + '.pd');
-	fs.writeFile(outFile, pd);
+	fs.writeFile(outFile, 	pd);
 	console.log('conversion complete!');
 }
+
+function depthFirstRecursive(father,node){
+ 	  	if(node){
+ 	  		var patchername = undefined;
+
+	  		if (father.text){
+	  			patchername = father.text.split(" ")[1];
+	  			pd += "\n#N canvas " + node.rect[0] + " " + node.rect[1] + " " + node.rect[2] + " " + node.rect[3] + " " + patchername + " 10;";
+	  		}
+			else // main patch
+				pd += "\n#N canvas " + node.rect[0] + " " + node.rect[1] + " " + node.rect[2] + " " + node.rect[3] + " 10;";
+
+			// all objects
+			objects = node.boxes;
+			objects.forEach((obj) => {
+				let type = obj.box.maxclass;
+				let text = obj.box.text
+				let args = [];
+				let objtype = 'undefined'
+				args.push(obj.box.patching_rect.slice(0, 2).join(" "));
+				args.push(obj.box.text);
+
+				if (text)
+					objtype = text.split(" ")[0];
+
+				let code = "\n";
+
+				if (parser[type] === undefined){
+					console.error('object of type:', type, 'unsupported');
+					return;
+				} 
+				else if (objtype === 'patcher'){
+					return;
+				}
+				else {
+					code += "#X " + parser[type](args) + ';';
+				}
+				pd += code + ";";
+			});
+
+			for(var i = 0 ; i < node.boxes.length; i++){
+				var child = node.boxes[i].box.patcher;
+				if (child)
+					depthFirstRecursive(node.boxes[i].box,child);
+			}
+
+	  		// connect objects :
+	  		objects = node.boxes
+  			// storage for object connection id's
+  			connections = [];
+  			objects.forEach((obj) => {
+  				if (!(obj.box.patcher))
+  					connections.push(obj.box.id);
+  			});
+  			objects.forEach((obj) => {
+  				if (obj.box.patcher)
+  					connections.push(obj.box.id);
+  			});
+  			lines = node.lines;
+  			lines.forEach((ln) => {
+  				let connect = [];
+   				connect.push(connections.indexOf(ln.patchline.source[0]));
+  				connect.push(ln.patchline.source[1]);
+  				connect.push(connections.indexOf(ln.patchline.destination[0]));
+  				connect.push(ln.patchline.destination[1]);
+  				pd += "\n#X connect " + connect.join(" ") + ";";
+  			});
+  			
+  			if (patchername)
+  			{
+      			pd += "\n#X restore " + father.patching_rect.slice(0, 2).join(" ") + " pd " + patchername + ";";
+     		}
+     	}
+     }
