@@ -5,7 +5,7 @@
   "main": "max-pd.js",
   "scripts": {
     "start": "node main.js",
-    "test": "nodemon main.js"
+    "test": "node main.js test/maxtest.maxpat test/maxsubtest.maxpat test/maxsubrecursive.maxpat test/pdtest.pd"
   },
   "keywords": [],
   "author": "",

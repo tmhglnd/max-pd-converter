@@ -103,24 +103,25 @@ const parser = {
 
 if (process.argv[2] === undefined){
 	console.error("Please provide a .maxpat or .pd file as argument");
-	// convertPd('test/pdtest.pd');
-	convertMax('test/maxtest.maxpat');
-	convertMax('test/maxsubtest.maxpat');
-	convertMax('test/maxsubrecursive.maxpat');
 } else {
-	let f = process.argv[2];
-	if (f.match(/.*\.(maxpat|pd)$/) === null){
-		console.error("Please provide a .maxpat or .pd file as argument");
-	} else if (f.match(/.*\.maxpat$/)){
-		// convert the Maxpatch to Pd
-		convertMax(process.argv[2]);
-	} else {
-		convertPd(process.argv[2]);
-	}
+	let files = process.argv.slice(2, process.argv.length);
+
+	// process multiple files
+	files.forEach((f) => {
+		if (f.match(/.*\.(maxpat|pd)$/) === null){
+			console.error("Please provide a .maxpat or .pd file as argument");
+		} else if (f.match(/.*\.maxpat$/)){
+			// convert the Maxpatch to Pd
+			convertMax(f);
+		} else {
+			// convert the Pdpatch to Max
+			convertPd(f);
+		}
+	});
 }
 
 function convertPd(file){
-	console.log('converting to Max...');
+	console.log('=====> converting ' + file + ' to Max...');
 	// the max patcher template
 	let pat = { ...patchTemplate };
 	// arrays to store boxes and connections
@@ -191,11 +192,11 @@ function convertPd(file){
 	let fInfo = path.parse(file);
 	let outFile = path.join(fInfo.dir, fInfo.name + '.maxpat');
 	fs.writeJsonSync(outFile, pat, { spaces: 2});
-	console.log('conversion complete!');
+	console.log('=====> conversion complete!\n');
 }
 
 function convertMax(file){
-	console.log('=====> converting to Pd (recursive) ...');
+	console.log('=====> converting ' + file + ' to Pd (recursive) ...');
 	// string for output text
 	pd = "";
 
