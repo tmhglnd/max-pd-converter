@@ -93,10 +93,10 @@ const parser = {
 		return "floatatom " + args[0] + " 8 " + "0 0 0" + " - - -, " + "f 8";
 	},
 	'inlet' : (args) => {
-		return "obj " + args[0] + " " +  " inlet";
+		return "obj " + args[0] +  " inlet";
 	},
 	'outlet' : (args) => {
-		return "obj " + args[0] + " " +  " outlet";
+		return "obj " + args[0] +  " outlet";
 	},
 
 }
@@ -104,7 +104,9 @@ const parser = {
 if (process.argv[2] === undefined){
 	console.error("Please provide a .maxpat or .pd file as argument");
 	// convertPd('test/pdtest.pd');
-	// convertMax('test/maxtest.maxpat');
+	convertMax('test/maxtest.maxpat');
+	convertMax('test/maxsubtest.maxpat');
+	convertMax('test/maxsubrecursive.maxpat');
 } else {
 	let f = process.argv[2];
 	if (f.match(/.*\.(maxpat|pd)$/) === null){
@@ -193,94 +195,91 @@ function convertPd(file){
 }
 
 function convertMax(file){
-	console.log('converting to Pd (recursive) ...');
+	console.log('=====> converting to Pd (recursive) ...');
 	// string for output text
 	pd = "";
 
 	// read the maxpatch
 	let patch = fs.readJsonSync(file);
-	// window settings
-	let window = patch.patcher.rect;
 	
-	depthFirstRecursive(patch,patch.patcher);
+	// recursively convert patchers
+	parsePatcherMax(patch,patch.patcher);
 	
 	// write output file
 	let fInfo = path.parse(file);
 	let outFile = path.join(fInfo.dir, fInfo.name + '.pd');
-	fs.writeFile(outFile, 	pd);
-	console.log('conversion complete!');
+	fs.writeFile(outFile, pd);
+	console.log('=====> conversion complete!\n');
 }
 
-function depthFirstRecursive(father,node){
- 	  	if(node){
- 	  		var patchername = undefined;
+function parsePatcherMax(father, node){
+	if (node){
+		// the patcher name or main
+		let patchername = 'main';
+		// window settings
+		let window = node.rect.join(" ");
+		// all objects in the patch
+		let objects = node.boxes;
+		// storage for object connection id's
+		let connections = [];
+		// all connections between objects
+		let lines = node.lines;
 
-	  		if (father.text){
-	  			patchername = father.text.split(" ")[1];
-	  			pd += "\n#N canvas " + node.rect[0] + " " + node.rect[1] + " " + node.rect[2] + " " + node.rect[3] + " " + patchername + " 10;";
-	  		}
-			else // main patch
-				pd += "\n#N canvas " + node.rect[0] + " " + node.rect[1] + " " + node.rect[2] + " " + node.rect[3] + " 10;";
+		// main patch, if has a text subpatch naming
+		pd += "\n#N canvas " + window;
+		if (father.text){
+			// console.log('@name', father.text);
+			patchername = father.text.split(" ")[1];
+			pd += " " + patchername;
+		}
+		pd += " 10;";
 
-			// all objects
-			objects = node.boxes;
-			objects.forEach((obj) => {
-				let type = obj.box.maxclass;
-				let text = obj.box.text
-				let args = [];
-				let objtype = 'undefined'
-				args.push(obj.box.patching_rect.slice(0, 2).join(" "));
-				args.push(obj.box.text);
+		objects.forEach((obj) => {
+			// console.log('@object', obj);
+			let type = obj.box.maxclass;
+			let text = obj.box.text;
+			let args = [];
+			// if subpatcher this is 'p' or 'patcher' 
+			let objType = (text)? text.split(" ")[0] : 'undefined';
+			// console.log('@type', type, '@text', text, '@obj', objType);
 
-				if (text)
-					objtype = text.split(" ")[0];
+			args.push(obj.box.patching_rect.slice(0, 2).join(" "));
+			args.push(obj.box.text);
 
-				let code = "\n";
+			connections.push(obj.box.id);
 
-				if (parser[type] === undefined){
-					console.error('object of type:', type, 'unsupported');
-					return;
-				} 
-				else if (objtype === 'patcher'){
-					return;
-				}
-				else {
-					code += "#X " + parser[type](args) + ';';
-				}
-				pd += code + ";";
-			});
+			if (parser[type] === undefined){
+				console.error('object of type:', type, 'unsupported');
+				return;
+			} 
+			else if (objType === 'patcher' || objType === 'p'){
+				console.log('	@toSubpatcher', text);
+				// if subpatcher, parse that patcher first
+				parsePatcherMax(obj.box, obj.box.patcher);
 
-			for(var i = 0 ; i < node.boxes.length; i++){
-				var child = node.boxes[i].box.patcher;
-				if (child)
-					depthFirstRecursive(node.boxes[i].box,child);
+				console.log('	@backTo', patchername);
+				return;
+			} 
+			else {
+				console.log('@parsedObject', type, (args[1])? '['+args[1]+']' : '');
+				pd += "\n#X " + parser[type](args) + ";";
 			}
+		});
 
-	  		// connect objects :
-	  		objects = node.boxes
-  			// storage for object connection id's
-  			connections = [];
-  			objects.forEach((obj) => {
-  				if (!(obj.box.patcher))
-  					connections.push(obj.box.id);
-  			});
-  			objects.forEach((obj) => {
-  				if (obj.box.patcher)
-  					connections.push(obj.box.id);
-  			});
-  			lines = node.lines;
-  			lines.forEach((ln) => {
-  				let connect = [];
-   				connect.push(connections.indexOf(ln.patchline.source[0]));
-  				connect.push(ln.patchline.source[1]);
-  				connect.push(connections.indexOf(ln.patchline.destination[0]));
-  				connect.push(ln.patchline.destination[1]);
-  				pd += "\n#X connect " + connect.join(" ") + ";";
-  			});
-  			
-  			if (patchername)
-  			{
-      			pd += "\n#X restore " + father.patching_rect.slice(0, 2).join(" ") + " pd " + patchername + ";";
-     		}
-     	}
-     }
+		// make all connections
+		lines.forEach((ln) => {
+			let connect = [];
+
+			connect.push(connections.indexOf(ln.patchline.source[0]));
+			connect.push(ln.patchline.source[1]);
+			connect.push(connections.indexOf(ln.patchline.destination[0]));
+			connect.push(ln.patchline.destination[1]);
+			pd += "\n#X connect " + connect.join(" ") + ";";
+		});
+		
+		// end subpatcher with a restore message
+		if (patchername !== 'main'){
+			pd += "\n#X restore " + father.patching_rect.slice(0, 2).join(" ") + " pd " + patchername + ";";
+		}
+	}
+}
