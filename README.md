@@ -16,17 +16,32 @@ $ cd max-pd-converter
 $ npm install
 ```
 
+Quickly test and see result in the test folder
+
+```
+$ npm test
+```
+
 # Usage
 
+**convert single max-patch**
 ```
-$ npm start <filepath>/myMaxPatch.maxpat
+$ npm start <path>/myMaxPatch.maxpat
 ```
-**or**
+**or pd-patch**
 ```
-$ npm start <filepath>/myPdPatch.pd
+$ npm start <path>/myPdPatch.pd
 ```
+**or convert multiple files in one line**
+```
+$ npm start <path>/patch1.maxpat <path>/patch2.pd <path>/patch3.maxpat ...
+```
+<!-- **or convert an entire folder**
+```
+$ npm start <path>/myPatchesFolder
+``` -->
 
-The result is stored in the same folder as the original file and named as original but with opposite extension.
+The result is stored in the same folder as the original file and named identical as the original except with the opposite extension:
 
 ```
 myMaxPatch.maxpat => myMaxPatch.pd
