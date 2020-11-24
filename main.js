@@ -242,15 +242,16 @@ function parsePatcherMax(father, node){
 			let args = [];
 			// if subpatcher this is 'p' or 'patcher' 
 			let objType = (text)? text.split(" ")[0] : 'undefined';
-			// console.log('@type', type, '@text', text, '@obj', objType);
 
 			args.push(obj.box.patching_rect.slice(0, 2).join(" "));
 			args.push(obj.box.text);
+			console.log('@type', type, '@text', text, '@obj', objType, args);
 
 			connections.push(obj.box.id);
 
 			if (parser[type] === undefined){
 				console.error('object of type:', type, 'unsupported');
+					pd += "\n#X " + "obj "+ args[0] + " bogus" + ";";
 				return;
 			} 
 			else if (objType === 'patcher' || objType === 'p'){
