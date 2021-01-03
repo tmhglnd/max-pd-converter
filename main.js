@@ -247,7 +247,11 @@ function parsePatcherMax(father, node){
 			let objType = (text)? text.split(" ")[0] : 'undefined';
 
 			args.push(obj.box.patching_rect.slice(0, 2).join(" "));
-			args.push(obj.box.text);
+s
+			if(obj.box.text)
+				args.push(obj.box.text.replace('#','\\$'));
+			else
+				sargs.push(obj.box.text);
 			console.log('@type', type, '@text', text, '@obj', objType, args);
 
 			connections.push(obj.box.id);
