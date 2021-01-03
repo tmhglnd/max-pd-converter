@@ -92,6 +92,9 @@ const parser = {
 	'number' : (args) => {
 		return "floatatom " + args[0] + " 8 " + "0 0 0" + " - - -, " + "f 8";
 	},
+	'slider' : (args) => {
+		return "obj " + args[0] + " vsl 15 128 0 127 0 0 empty empty empty 0 -9 0 10 -262144 -1 -1 3000 1";
+	},
 	'inlet' : (args) => {
 		return "obj " + args[0] +  " inlet";
 	},
