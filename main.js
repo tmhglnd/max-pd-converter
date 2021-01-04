@@ -243,17 +243,21 @@ function parsePatcherMax(father, node){
 			let type = obj.box.maxclass;
 			let text = obj.box.text;
 			let args = [];
-			// if subpatcher this is 'p' or 'patcher' 
+			// if subpatcher this is 'p' or 'patcher'
 			let objType = (text)? text.split(" ")[0] : 'undefined';
-
 			args.push(obj.box.patching_rect.slice(0, 2).join(" "));
-s
-			if(obj.box.text)
+			if (type === 'message')
+			{
+					// we have to escape special characters in message box 
+					let trimtext = JSON.stringify(obj.box.text)
+					trimtext = trimtext.replace(";\\r"," \\; ")
+					args.push(trimtext.replace('#','\\$').slice(1,-1));
+			}
+			else if (obj.box.text)
 				args.push(obj.box.text.replace('#','\\$'));
 			else
-				sargs.push(obj.box.text);
-			console.log('@type', type, '@text', text, '@obj', objType, args);
-
+				args.push(obj.box.text);
+			console.log('@type', type, '@obj', objType, args);
 			connections.push(obj.box.id);
 
 			if (parser[type] === undefined){
