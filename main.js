@@ -249,9 +249,10 @@ function parsePatcherMax(father, node){
 			if (type === 'message')
 			{
 					// we have to escape special characters in message box 
-					let trimtext = JSON.stringify(obj.box.text)
-					trimtext = trimtext.replace(";\\r"," \\; ")
-					args.push(trimtext.replace('#','\\$').slice(1,-1));
+					let processed_text = JSON.stringify(obj.box.text);
+					processed_text = processed_text.replace(";\\r"," \\; ");
+					processed_text = processed_text.replace('$','\\$');
+					args.push(processed_text.slice(1,-1));
 			}
 			else if (obj.box.text)
 				args.push(obj.box.text.replace('#','\\$'));
