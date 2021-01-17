@@ -72,36 +72,35 @@ const parser = {
 	},
 	// Max -> Pure Data Processor
 	'message' : (args) => {
-		return "msg " + args[0] + " " + args[1];
+		return `msg ${args[0]} ${args[1]}`;
 	},
 	'comment' : (args) => {
-		return "text " + args[0] + " " + args[1];
+		return `text ${args[0]} ${args[1]}`;
 	},
 	'button' : (args) => {
-		return "obj " + args[0] + " bng 15 250 50 0 empty empty empty 17 7 0 10 -262144 -1 -1";
+		return `obj ${args[0]} bng 15 250 50 0 empty empty empty 17 7 0 10 -262144 -1 -1`;
 	},
 	'toggle' : (args) => {
-		return "obj " + args[0] + " tgl 15 0 empty empty empty 17 7 0 10 -262144 -1 -1 0 1";
+		return `obj ${args[0]} tgl 15 0 empty empty empty 17 7 0 10 -262144 -1 -1 0 1`;
 	},
 	'newobj' : (args) => {
-		return "obj " + args[0] + " " + args[1];
+		return `obj ${args[0]} ${args[1]}`;
 	},
 	'flonum' : (args) => {
-		return "floatatom " + args[0] + " 8 " + "0 0 0" + " - - -, " + "f 8";
+		return `floatatom ${args[0]} 8 0 0 0 - - -, f 8`;
 	},
 	'number' : (args) => {
-		return "floatatom " + args[0] + " 8 " + "0 0 0" + " - - -, " + "f 8";
+		return `floatatom ${args[0]} 8 0 0 0 - - -, f 8`;
 	},
 	'slider' : (args, prefs) => {
 		return `obj ${args[0]} vsl 15 128 0 ${prefs.size} 0 0 empty empty empty 0 -9 0 10 -262144 -1 -1 3000 1`;
 	},
 	'inlet' : (args) => {
-		return "obj " + args[0] +  " inlet";
+		return `obj ${args[0]} inlet`;
 	},
 	'outlet' : (args) => {
-		return "obj " + args[0] +  " outlet";
+		return `obj ${args[0]} outlet`;
 	},
-
 }
 
 if (process.argv[2] === undefined){
