@@ -4,13 +4,13 @@
 		"appversion" : 		{
 			"major" : 8,
 			"minor" : 1,
-			"revision" : 5,
+			"revision" : 8,
 			"architecture" : "x64",
 			"modernui" : 1
 		}
 ,
 		"classnamespace" : "box",
-		"rect" : [ 738.0, 213.0, 637.0, 440.0 ],
+		"rect" : [ 128.0, 183.0, 637.0, 440.0 ],
 		"bglocked" : 0,
 		"openinpresentation" : 0,
 		"default_fontsize" : 12.0,
@@ -45,7 +45,6 @@
 					"numinlets" : 1,
 					"numoutlets" : 0,
 					"patching_rect" : [ 240.0, 30.0, 270.0, 20.0 ],
-					"presentation_linecount" : 2,
 					"text" : "This patch was converted from Max to Pure Data"
 				}
 
