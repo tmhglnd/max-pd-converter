@@ -6,7 +6,15 @@ A Node.JS script that converts MaxMSP patches to PureData or **vice versa**. At 
 
 # Newest Features
 
+- Support for slider with size preference
+- Support for segmented messages with `,`
+- Support for variables in messages `$1 $2 ...`
+- Support for arguments in abstractions `#` => `$`
 - Recursive conversion of subpatchers are now supported in the Max to Pd converter (not yet in the Pd to Max converter).
+
+## Screenshot
+
+![](images/screenshot.png)
 
 # Install
 
@@ -47,10 +55,6 @@ The result is stored in the same folder as the original file and named identical
 myMaxPatch.maxpat => myMaxPatch.pd
 myPdPatch.pd      => myPdPatch.maxpat
 ```
-
-## Screenshot
-
-![](images/screenshot.png)
 
 ## Contribution
 
