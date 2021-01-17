@@ -1,0 +1,18 @@
+
+#N canvas 560 184 640 480 10;
+#X floatatom 287 270 8 0 0 0 - - -, f 8;
+#X obj 287 223 vsl 15 128 0 5 0 0 empty empty empty 0 -9 0 10 -262144 -1 -1 3000 1;
+#X floatatom 287 150 8 0 0 0 - - -, f 8;
+#X obj 287 105 vsl 15 128 0 512 0 0 empty empty empty 0 -9 0 10 -262144 -1 -1 3000 1;
+#X text 60 45 Max GUI Elements;
+#X floatatom 135 270 8 0 0 0 - - -, f 8;
+#X floatatom 210 270 8 0 0 0 - - -, f 8;
+#X floatatom 60 270 8 0 0 0 - - -, f 8;
+#X obj 210 105 vsl 15 128 0 256 0 0 empty empty empty 0 -9 0 10 -262144 -1 -1 3000 1;
+#X obj 135 105 vsl 15 128 0 1 0 0 empty empty empty 0 -9 0 10 -262144 -1 -1 3000 1;
+#X obj 60 105 vsl 15 128 0 undefined 0 0 empty empty empty 0 -9 0 10 -262144 -1 -1 3000 1;
+#X connect 10 0 7 0;
+#X connect 1 0 0 0;
+#X connect 9 0 5 0;
+#X connect 8 0 6 0;
+#X connect 3 0 2 0;

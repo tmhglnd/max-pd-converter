@@ -92,8 +92,8 @@ const parser = {
 	'number' : (args) => {
 		return "floatatom " + args[0] + " 8 " + "0 0 0" + " - - -, " + "f 8";
 	},
-	'slider' : (args) => {
-		return "obj " + args[0] + " vsl 15 128 0 127 0 0 empty empty empty 0 -9 0 10 -262144 -1 -1 3000 1";
+	'slider' : (args, prefs) => {
+		return `obj ${args[0]} vsl 15 128 0 ${prefs.size} 0 0 empty empty empty 0 -9 0 10 -262144 -1 -1 3000 1`;
 	},
 	'inlet' : (args) => {
 		return "obj " + args[0] +  " inlet";
@@ -239,26 +239,32 @@ function parsePatcherMax(father, node){
 		pd += " 10;";
 
 		objects.forEach((obj) => {
-			// console.log('@object', obj);
+			console.log('@object', obj);
+			
 			let type = obj.box.maxclass;
 			let text = obj.box.text;
 			let args = [];
 			// if subpatcher this is 'p' or 'patcher'
 			let objType = (text)? text.split(" ")[0] : 'undefined';
+			
+			console.log('@type', type, '@obj', objType, args);
+			
 			args.push(obj.box.patching_rect.slice(0, 2).join(" "));
-			if (type === 'message')
-			{
+			// process messages separately
+			if (type === 'message'){
 					// we have to escape special characters in message box 
 					let processed_text = JSON.stringify(obj.box.text);
 					processed_text = processed_text.replace(";\\r"," \\; ");
 					processed_text = processed_text.replace('$','\\$');
 					args.push(processed_text.slice(1,-1));
 			}
-			else if (obj.box.text)
+			else if (obj.box.text){
 				args.push(obj.box.text.replace('#','\\$'));
-			else
+			} else {
 				args.push(obj.box.text);
-			console.log('@type', type, '@obj', objType, args);
+			}
+			
+			// add id's for creating connections between objects
 			connections.push(obj.box.id);
 
 			if (parser[type] === undefined){
@@ -276,7 +282,7 @@ function parsePatcherMax(father, node){
 			} 
 			else {
 				console.log('@parsedObject', type, (args[1])? '['+args[1]+']' : '');
-				pd += "\n#X " + parser[type](args) + ";";
+				pd += "\n#X " + parser[type](args, obj.box) + ";";
 			}
 		});
 
