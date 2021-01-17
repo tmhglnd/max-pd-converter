@@ -5,6 +5,11 @@ node_modules
 test/maxtest.pd
 test/maxsubtest.pd
 test/maxsubrecursive.pd
+test/maxmessages.pd
+test/maxgui.pd
+test/maxabstraction.pd
 test/pdtest.maxpat
 test/pdsubtest.maxpat
 test/pdsubrecursive.maxpat
+test/pdmessages.maxpat
+test/pdgui.maxpat

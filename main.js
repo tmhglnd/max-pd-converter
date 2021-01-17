@@ -251,6 +251,8 @@ function parsePatcherMax(father, node){
 			
 			args.push(obj.box.patching_rect.slice(0, 2).join(" "));
 
+			// if undefined create empty string
+			text = (text)? text : '';
 			// process messages separately
 			if (type === 'message'){
 				// escape dollar sign
@@ -260,7 +262,7 @@ function parsePatcherMax(father, node){
 				// escape carriage returns
 				text = text.replace(/;\\r/g, '\\; ');
 			} else {
-				text = (text)? text.replace('#', '\\$') : text;
+				text = text.replace('#', '\\$');
 			}
 			args.push(text);
 
@@ -269,7 +271,7 @@ function parsePatcherMax(father, node){
 
 			if (parser[type] === undefined){
 				console.error('object of type:', type, 'unsupported');
-				
+
 				pd += "\n#X " + "obj "+ args[0] + " bogus" + ";";
 				return;
 			} 
