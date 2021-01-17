@@ -1,0 +1,18 @@
+
+#N canvas 59 103 640 480 10;
+#X msg 110 156 1 2 3;
+#X text 45 30 Messages in Max;
+#X obj 45 330 print;
+#X msg 152 330 segmented \, message \, also \, allowed;
+#X msg 195 270 ;max maxwindow;
+#X msg 152 225 "a symbol" in a "longer list \, with comma";
+#X msg 110 186 \$1 \$2 \$3 4 5 6;
+#X msg 75 120 This is some text;
+#X msg 45 75 0 \, 1 10 0 500;
+#X connect 8 0 2 0;
+#X connect 0 0 6 0;
+#X connect 7 0 2 0;
+#X connect 6 0 2 0;
+#X connect 5 0 2 0;
+#X connect 4 0 2 0;
+#X connect 3 0 2 0;

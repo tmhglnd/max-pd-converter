@@ -250,23 +250,27 @@ function parsePatcherMax(father, node){
 			console.log('@type', type, '@obj', objType, args);
 			
 			args.push(obj.box.patching_rect.slice(0, 2).join(" "));
+
 			// process messages separately
 			if (type === 'message'){
-					// we have to escape special characters in message box 
-					let processed_text = JSON.stringify(obj.box.text);
-					processed_text = processed_text.replace(";\\r"," \\; ");
-					processed_text = processed_text.replace('$','\\$');
-					args.push(processed_text.slice(1,-1));
+				// escape dollar sign
+				text = text.replace(/\$/g, '\\$');
+				// escape comma for segmented messages
+				text = text.replace(/\,/g, ' \\,');
+				// escape carriage returns
+				text = text.replace(/;\\r/g, '\\; ');
 			} else {
-				args.push((text)? text.replace('#', '\\$') : text);
+				text = (text)? text.replace('#', '\\$') : text;
 			}
-			
+			args.push(text);
+
 			// add id's for creating connections between objects
 			connections.push(obj.box.id);
 
 			if (parser[type] === undefined){
 				console.error('object of type:', type, 'unsupported');
-					pd += "\n#X " + "obj "+ args[0] + " bogus" + ";";
+				
+				pd += "\n#X " + "obj "+ args[0] + " bogus" + ";";
 				return;
 			} 
 			else if (objType === 'patcher' || objType === 'p'){
