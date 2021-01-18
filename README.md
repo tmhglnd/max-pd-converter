@@ -1,4 +1,4 @@
-# max-pd-converter
+# max <=> pd converter
 
 A Node.JS script that converts MaxMSP patches to PureData or **vice versa**. At the moment not all objects are compatible with the conversion or alternatively named in the output to ensure compatability. This may result in Pd- or Max-patches that are not immediately working because of syntax errors in the patches. You will have to check your .pd or .maxpat output for these errors and fix the patches where needed. Abstractions/Externals are not supported. It also depends on your version of Pd/Max and which libraries you have included. This converter can however work as a quick'n'dirty starting point for converting your patches without having to repatch everything. Future versions may have better syntax corrections.
 
